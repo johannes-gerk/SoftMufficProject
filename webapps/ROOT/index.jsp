@@ -7,7 +7,10 @@
 <title>hello to azure</title>
 </head>
 <body>
-<h1><% out.println("Hello again Azure!"); %></h1>
-<h1><% out.println("modified and pushed to git and autodeployed to azure app"); %></h1>
+<h1><% out.println("How to set up project:"); %></h1>
+<h2><% out.println("1. get Eclipse https://www.eclipse.org/"); %></h2>
+<h2><% out.println("2. get Git-Desktop https://desktop.github.com/"); %></h2>
+<h2><% out.println("3. in Git-Desktop clone repo from URL https://github.com/johannes-gerk/SoftMuffinProject.git"); %></h2>
+<h2><% out.println("4. import to Eclipse from File System (./Documents/GitHub/ProjectName)"); %></h2>
 </body>
 </html>
