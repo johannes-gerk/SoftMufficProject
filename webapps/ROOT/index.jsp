@@ -4,7 +4,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-<title>hello to azure</title>
+<title>Auto-Deployment to Azure</title>
 </head>
 <body>
 <img src="resources/muffincat.png"> 
