@@ -8,5 +8,6 @@
 </head>
 <body>
 <h1><% out.println("Hello again Azure!"); %></h1>
+<h1><% out.println("modified and pushed to git and autodeployed to azure app"); %></h1>
 </body>
 </html>
