@@ -34,9 +34,13 @@ public class MyServlet extends HttpServlet {
 		response.setContentType("text/html");
 		PrintWriter out = response.getWriter();
 		out.println("<hmtl><body>");
+		out.println("<h2>Ergebnis: </>");
 		out.println("<textarea name='text' rows=\"\" cols=\"\">");
 		response.getWriter().print(ergebnis);
-		out.println("</textarea>");
+		out.println("</textarea>"
+				+ "<script>\r\n" + 
+				"    document.write('<a href=\"' + /Servlet + '\">Go Back</a>');\r\n" + 
+				"</script>");
 		out.println("<hmtl><body>");
 	
 	}
@@ -47,9 +51,11 @@ public class MyServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
 		String button = request.getParameter("button");
+		String iter = request.getParameter("iterations");
+		Integer iterations = Integer.parseInt(iter);
 		if ("buttonCalc".equals(button)) {
 			GA einGA = new GA();
-			for (int g = 0; g < 100; g++) {
+			for (int g = 0; g < (int)iterations; g++) {
 				einGA.rekombinieren();// selektion
 				einGA.mutieren();
 				einGA.bewerten();// DEkodieren
