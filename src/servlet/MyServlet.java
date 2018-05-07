@@ -15,47 +15,54 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet(name = "Servlet", urlPatterns = { "/Servlet" })
 public class MyServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-       
+
 	private float ergebnis;
-    /**
-     * @see HttpServlet#HttpServlet()
-     */
-    public MyServlet() {
-        super();
-        // TODO Auto-generated constructor stub
-    }
 
 	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
+	 * @see HttpServlet#HttpServlet()
 	 */
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		//response.getWriter().append("Served at: ").append(request.getContextPath());
+	public MyServlet() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+	/**
+	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
+	 *      response)
+	 */
+	protected void doGet(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		// response.getWriter().append("Served at: ").append(request.getContextPath());
 		response.setContentType("text/html");
 		PrintWriter out = response.getWriter();
 		out.println("<hmtl><body>");
 		out.println("<h2>Ergebnis: </>");
 		out.println("<textarea name='text' rows=\"\" cols=\"\">");
 		response.getWriter().print(ergebnis);
-		out.println("</textarea>"
-				+ "<script>\r\n" + 
-				"    document.write('<a href=\"' + /Servlet + '\">Go Back</a>');\r\n" + 
-				"</script>");
+		out.println("</textarea>" + "<script>\r\n"
+				+ "    document.write('<a href=\"' + /solver.jsp + '\">Go Back</a>');\r\n" + "</script>");
 		out.println("<hmtl><body>");
-	
+
 	}
 
 	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
+	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
+	 *      response)
 	 */
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		
+	protected void doPost(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+
 		String button = request.getParameter("button");
 		String iter = request.getParameter("iterations");
-		Integer iterations = Integer.parseInt(iter);
+		Integer iterations;
+		try {
+			iterations = Integer.parseInt(iter);
+		} catch (NumberFormatException e) {
+			iterations = 0;
+		}
 		if ("buttonCalc".equals(button)) {
 			GA einGA = new GA();
-			for (int g = 0; g < (int)iterations; g++) {
+			for (int g = 0; g < (int) iterations; g++) {
 				einGA.rekombinieren();// selektion
 				einGA.mutieren();
 				einGA.bewerten();// DEkodieren
