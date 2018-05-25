@@ -8,10 +8,24 @@
 </head>
 <body>
 	<div>
-		<form action="${pageContext.request.contextPath}/Servlet" method="post">		
-			<div><h2>Iterations:</h2></div>
-			<div><textarea id="1" name="iterations" cols="50" rows="2"></textarea></div>
-			<div><button type="submit" name="button" value="buttonCalc">Calculate</button></div>
+		<form action="${pageContext.request.contextPath}/Servlet" method="post">
+			<div>
+				<h2>Iterations:</h2>
+			</div>
+			<div>
+				<textarea id="1" name="iterations" cols="50" rows="2"></textarea>
+			</div>
+			<div>
+				<fieldset>
+					<input type="radio" id="onepoint" name="radioSelect"
+						value="onepoint"><label for="onepoint"> One-Point-Crossover</label>
+					<input type="radio" id="uniform" name="radioSelect"
+						value="uniform"><label for="uniform"> Uniform-Crossover</label>
+				</fieldset>
+			</div>
+			<div>
+				<button type="submit" name="button" value="buttonCalc">Calculate</button>
+			</div>
 		</form>
 	</div>
 </body>
