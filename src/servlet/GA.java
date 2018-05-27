@@ -23,9 +23,12 @@ class GA {
 
 	int[][] eltern = new int[anz][gene];
 	int[][] nachkommen = new int[anz][gene];
-	int[] besteLsg = new int[gene];
-	float[] fitness = new float[anz];
 	float besteFitness = -9999999.9f;
+	int[] besteLsg = new int[gene];
+	
+	float[] fitnessA = new float[anz];
+	
+	float[] fitnessB = new float[anz];
 
 	float[][] nutzwerteA = null;
 	float[][] nutzwerteB = null;
@@ -34,7 +37,7 @@ class GA {
 	java.sql.Timestamp time = new java.sql.Timestamp(System.currentTimeMillis());
 	Random r = new Random(time.getTime());
 
-	float berechneFitness(int indiv) {
+	float berechneFitness(int indiv, float[][] nutzwerte) {
 		/*
 		 * float deciwert=-1.0f; float dualwert= 0.0f; float fitness;
 		 * 
@@ -48,11 +51,11 @@ class GA {
 
 		int result = 0;
 		boolean pair;
-		for (int i = 0; i < nutzwerteA.length; i++) {
-			for (int j = 0; j < nutzwerteA.length; j++) {
+		for (int i = 0; i < nutzwerte.length; i++) {
+			for (int j = 0; j < nutzwerte.length; j++) {
 				/* Entlang der Diagonale. */
 				if (i == j) {
-					result += (eltern[indiv][j] * nutzwerteA[i][j]);
+					result += (eltern[indiv][j] * nutzwerte[i][j]);
 					// System.out.println("diagonal indiv "+indiv+" result " + (eltern[indiv][j] *
 					// nutzwerteA[i][j]));
 				}
@@ -60,7 +63,7 @@ class GA {
 				/* Bilde Paare. */
 				pair = false;
 				if (i == 0) {
-					for (int pairs = j; pairs < nutzwerteA.length; pairs++) {
+					for (int pairs = j; pairs < nutzwerte.length; pairs++) {
 
 						if (eltern[indiv][j] == 0) {
 							// System.out.println("CONTINUE");
@@ -69,7 +72,7 @@ class GA {
 						if (eltern[indiv][pairs] == 1) {
 							// System.out.println("eltern[indiv][pairs] "+eltern[indiv][pairs]);
 							if (pair == true) {
-								result += nutzwerteA[j][pairs];
+								result += nutzwerte[j][pairs];
 								// System.out.println("[" + j + "] [" + pairs + "] " + nutzwerteA[j][pairs]);
 							} else {
 								pair = true;
@@ -121,18 +124,21 @@ class GA {
 			}
 			System.out.println();
 			
+			// Soziale Wohlfahrt = größte Summer beider Agenten.
 			// Berechne Fitness aller Eltern.
-			fitness[i] = berechneFitness(i);
+			fitnessA[i] = berechneFitness(i, nutzwerteA);
+			fitnessB[i] = berechneFitness(i, nutzwerteB);
 
-			// Suche den Besten.
-			if (fitness[i] > besteFitness) {
+			// Suche den Besten Vertrag.
+			if ((fitnessA[i]+fitnessB[i]) > besteFitness) {
 				for (int j = 0; j < gene; j++) {
 					besteLsg[j] = eltern[i][j];
 				}
-				besteFitness = fitness[i];
+				besteFitness = fitnessA[i];
 				System.out.println("Beste Fitness= " + besteFitness);
 			}
 
+			
 			// System.out.print(" "+fitness[i]);
 			System.out.println();
 
@@ -149,7 +155,7 @@ class GA {
 		for (int i = 0; i < anz-1; i++) {
 			indi1 = Math.abs(r.nextInt()) % anz;
 			indi2 = Math.abs(r.nextInt()) % anz;
-			if (fitness[indi1] > fitness[indi2]) {
+			if (fitnessA[indi1]+fitnessB[indi1] > fitnessA[indi2]+fitnessB[indi2]) {
 				elter1 = indi1;
 			} else {
 				elter1 = indi2;
@@ -157,12 +163,13 @@ class GA {
 			// elter2 kann elter1 gleich sein
 			indi1 = Math.abs(r.nextInt()) % anz;
 			indi2 = Math.abs(r.nextInt()) % anz;
-			if (fitness[indi1] > fitness[indi2]) {
+			if (fitnessA[indi1]+fitnessB[indi1] > fitnessA[indi2]+fitnessB[indi2]) {
 				elter2 = indi1;
 			} else {
 				elter2 = indi2;
 			}
-
+			
+			
 			// Bilde zufällige Trennstelle.
 			trennstelle = Math.abs(r.nextInt()) % gene;
 
@@ -196,7 +203,7 @@ class GA {
 		for (int i = 0; i < anz-1; i++) {
 			indi1 = Math.abs(r.nextInt()) % anz;
 			indi2 = Math.abs(r.nextInt()) % anz;
-			if (fitness[indi1] > fitness[indi2]) {
+			if (fitnessA[indi1]+fitnessB[indi1] > fitnessA[indi2]+fitnessB[indi2]) {
 				elter1 = indi1;
 			} else {
 				elter1 = indi2;
@@ -204,7 +211,7 @@ class GA {
 			// elter2 kann elter1 gleich sein
 			indi1 = Math.abs(r.nextInt()) % anz;
 			indi2 = Math.abs(r.nextInt()) % anz;
-			if (fitness[indi1] > fitness[indi2]) {
+			if (fitnessA[indi1]+fitnessB[indi1] > fitnessA[indi2]+fitnessB[indi2]) {
 				elter2 = indi1;
 			} else {
 				elter2 = indi2;
@@ -253,10 +260,11 @@ class GA {
 			for (int j = 0; j < gene; j++) {
 				eltern[i][j] = nachkommen[i][j];
 			}
-			fitness[i] = berechneFitness(i);
+			fitnessA[i] = berechneFitness(i,nutzwerteA);
+			fitnessB[i] = berechneFitness(i, nutzwerteB);
 
-			if (fitness[i] > besteFitness) {
-				besteFitness = fitness[i];
+			if (fitnessA[i]+fitnessB[i] > besteFitness) {
+				besteFitness = fitnessA[i]+fitnessB[i];
 				for (int j = 0; j < gene; j++) {
 					besteLsg[j] = eltern[i][j];
 				}
@@ -265,7 +273,7 @@ class GA {
 		for (int k: besteLsg) {
 			result +="["+k+"]";
 		}
-		System.out.println("Beste Loesung: " + besteFitness + " Aktuelle Loesung: " + fitness[0] + " Bestes Individuum: "+result);
+		System.out.println("Beste Loesung: " + besteFitness + " Aktuelle Loesung: " + fitnessA[0]+fitnessB[0] + " Bestes Individuum: "+result);
 		/*
 		 * for(int j=0;j<gene;j++) { System.out.print(" "+eltern[0][j]); }
 		 * System.out.println();
@@ -273,19 +281,19 @@ class GA {
 
 	}
 	/* Selektion (Rank-Replacement) */
-	void selectionRankReplacement() {
+	void selectionRankReplacement(int method) {
 		String result = "";
 		
 		// Save der alten Generation
 		int [][] save = new int [anz][gene];
 		
 		// Map fürs Sortieren
-		Map<int[],Float> unsortedMap = new HashMap<int[],Float>();
+		Map<int[],Float> unsortedMapA = new HashMap<int[],Float>();
+		Map<int[],Float> unsortedMapB = new HashMap<int[],Float>();
 		
-		int rangTotal = 0;
-		Array raenge[];
+		int rankTotal = 0;
 		for (int i=1; i <= anz; i++) {
-			rangTotal += i; 
+			rankTotal += i;
 		}
 		
 		for (int i = 0; i < anz; i++) {
@@ -295,35 +303,127 @@ class GA {
 			}
 
 			// Fitness der neuen Generation
-			fitness[i] = berechneFitness(i);		
-			unsortedMap.put(nachkommen[i], fitness[i]);
+			fitnessA[i] = berechneFitness(i, nutzwerteA);
+			fitnessB[i] = berechneFitness(i, nutzwerteB);
+			unsortedMapA.put(nachkommen[i], fitnessA[i]);
+			unsortedMapB.put(nachkommen[i], fitnessB[i]);
 			
-			
-			if (fitness[i] > besteFitness) {
-				besteFitness = fitness[i];
+			if (fitnessA[i]+fitnessB[i] > besteFitness) {
+				besteFitness = fitnessA[i]+fitnessB[i];
 				for (int j = 0; j < gene; j++) {
 					besteLsg[j] = eltern[i][j];
 				}
 			}
 		}
-		LinkedHashMap<int[], Float> sortedMap;
-		sortedMap = (LinkedHashMap<int[], Float>) sortByComparator(unsortedMap, false);
+		// Sortierte HashMap nach value(fitness)
+		LinkedHashMap<int[], Float> sortedMapA;
+		LinkedHashMap<int[], Float> sortedMapB;
+		sortedMapA = (LinkedHashMap<int[], Float>) sortByComparator(unsortedMapA, false);
+		sortedMapB = (LinkedHashMap<int[], Float>) sortByComparator(unsortedMapB, false);
 		
-		int lowerBound = 0;
-		int upperBound = 0;
-		for (int i= 0; i < anz; i++) {
-			int randomNumber = Math.abs(r.nextInt()) % rangTotal;
-			lowerBound += upperBound+i;
-			upperBound = lowerBound +anz-i;
-			if (randomNumber >= (lowerBound) && randomNumber <= (upperBound)) {
-				
+		// Wahrscheinlichkeits HashMap
+		LinkedHashMap<int[], Float> sortedProbabilityMapA = new LinkedHashMap<int[], Float>();
+		LinkedHashMap<int[], Float> sortedProbabilityMapB = new LinkedHashMap<int[], Float>();
+		float iteration = 0;
+		float probability = 0; 
+		for (Map.Entry<int[], Float> entry : sortedMapA.entrySet()) {
+			probability = ((anz-iteration)/rankTotal);
+			sortedProbabilityMapA.put(entry.getKey(), probability);
+			iteration++;
+		}
+		iteration = 0;
+		probability = 0; 
+		for (Map.Entry<int[], Float> entry : sortedMapB.entrySet()) {
+			probability = ((anz-iteration)/rankTotal);
+			sortedProbabilityMapB.put(entry.getKey(), probability);
+			iteration++;
+		}
+
+		//int method = 3;
+		int successAmount = 0;
+		switch (method) {
+		// Würfel einmal für jedes Individuum (findet zu selten statt).
+			case 1:
+				int iterator = 0;
+				for (Map.Entry<int[], Float> entry : sortedProbabilityMapA.entrySet()) {
+					if (Math.random() <= entry.getValue()) {
+						save[iterator] = entry.getKey();
+						successAmount=+1;
+						iterator++;
+					}
+				}
+				iterator = 0;
+				for (Map.Entry<int[], Float> entry : sortedProbabilityMapB.entrySet()) {
+					if (Math.random() <= entry.getValue()) {
+						save[iterator] = entry.getKey();
+						successAmount=+1;
+						iterator++;
+					}
+				}
+				break;
+		// Würfel für alle Individuen anz-Mal.
+			case 2: 
+				for (int i = 0; i < anz; i++) {
+					for (Map.Entry<int[], Float> entry : sortedProbabilityMapA.entrySet()) {
+						float randomValue = r.nextFloat();
+						if (randomValue <= entry.getValue()) {
+							entry.setValue(0f);
+							save[i] = entry.getKey();
+							successAmount++;
+						}
+					}
+					for (Map.Entry<int[], Float> entry : sortedProbabilityMapB.entrySet()) {
+						float randomValue = r.nextFloat();
+						if (randomValue <= entry.getValue()) {
+							entry.setValue(0f);
+							save[i] = entry.getKey();
+							successAmount++;
+						}
+					}
+				}
+				break;
+		// Würfel einmal und überprüfe jedes Individuum (findet zu selten statt).
+			case 3:
+				int iterator3 = 0;
+				float randomValue = r.nextFloat();
+				for (Map.Entry<int[], Float> entry : sortedProbabilityMapA.entrySet()) {
+					if (randomValue <= entry.getValue()) {
+						save[iterator3] = entry.getKey();
+						successAmount++;
+						iterator3++;
+					}
+				}
+				iterator3 = 0;
+				randomValue = r.nextFloat();
+				for (Map.Entry<int[], Float> entry : sortedProbabilityMapB.entrySet()) {
+					if (randomValue <= entry.getValue()) {
+						save[iterator3] = entry.getKey();
+						successAmount++;
+						iterator3++;
+					}
+				}
+				break;
+		}	
+		for (int i = 0; i < anz; i++) {
+			for (int j = 0; j < gene; j++) {
+				eltern[i][j] = save[i][j];
+			}
+
+			// Fitness der neuen Generation
+			fitnessA[i] = berechneFitness(i, nutzwerteA);		
+			fitnessB[i] = berechneFitness(i, nutzwerteB);		
+			
+			if (fitnessA[i]+fitnessB[i] > besteFitness) {
+				besteFitness = fitnessA[i]+fitnessB[i];
+				for (int j = 0; j < gene; j++) {
+					besteLsg[j] = eltern[i][j];
+				}
 			}
 		}
-		
 		for (int k: besteLsg) {
 			result +="["+k+"]";
 		}
-		System.out.println("Beste Loesung: " + besteFitness + " Aktuelle Loesung: " + fitness[0] + " Bestes Individuum: "+result);
+		System.out.println("Beste Loesung: " + besteFitness + " Aktuelle Loesung: " + fitnessA[0]+fitnessB[0]+ " Success-Gen-Rep: "+successAmount + " Bestes Individuum: "+result);
 		/*
 		 * for(int j=0;j<gene;j++) { System.out.print(" "+eltern[0][j]); }
 		 * System.out.println();

@@ -70,7 +70,7 @@ public class MyServlet extends HttpServlet {
 					einGA.uniformCrossover();
 				}
 				einGA.flipMutation();
-				einGA.selectionGenReplacement();// Dekodieren
+				einGA.selectionRankReplacement(2);// Dekodieren
 			}
 			ergebnis = einGA.besteFitness;
 		}
