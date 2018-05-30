@@ -252,6 +252,27 @@ class GA {
 			}
 		}
 	}
+	
+		/* Swap-Mutation */
+	void swapMutation() {
+		int zz1, zz2;
+
+		for (int i = 0; i < anz; i++) {
+			for (int j = 0; j < gene; j++) {
+
+				// Auswahl ZWEIER random Stellen
+				zz1 = Math.abs(r.nextInt()) % 1000;
+				System.out.println("erster Wert: " + zz1);
+				zz2 = Math.abs(r.nextInt()) % 1000;
+				System.out.println("zweiter Wert: " + zz2);
+				// Tauschen der Bits
+				nachkommen[i][j] = eltern[zz1][j];
+				System.out.println("erste Ersetzung: " + nachkommen[zz2][j] + " wird zu " + eltern[zz1][j]);
+				nachkommen[i][j] = eltern[zz2][j];
+				System.out.println("zweite Ersetzung: " + nachkommen[zz1][j] + " wird zu " + eltern[zz2][j]);
+			}
+		}
+	}
 
 	/* Selektion (Gen-Replacement) <<<<<<<<<<<<<<<<<<<< */
 	void selectionGenReplacement() {
