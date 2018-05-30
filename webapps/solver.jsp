@@ -17,10 +17,18 @@
 			</div>
 			<div>
 				<fieldset>
-					<input type="radio" id="onepoint" name="radioSelect"
+					<input type="radio" id="onepoint" name="radioCross"
 						value="onepoint"><label for="onepoint"> One-Point-Crossover</label>
-					<input type="radio" id="uniform" name="radioSelect"
+					<input type="radio" id="uniform" name="radioCross"
 						value="uniform"><label for="uniform"> Uniform-Crossover</label>
+				</fieldset>
+			</div>
+			<div>
+				<fieldset>
+					<input type="radio" id="rankrep" name="radioSelection"
+						value="rankrep"><label for="rankrep"> Generation-Rank-Replacement</label>
+					<input type="radio" id="genrep" name="radioSelection"
+						value="genrep"><label for="genrep"> Generation-Replacement</label>
 				</fieldset>
 			</div>
 			<div>

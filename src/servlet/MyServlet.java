@@ -54,7 +54,8 @@ public class MyServlet extends HttpServlet {
 
 		String button = request.getParameter("button");
 		String iter = request.getParameter("iterations");
-		String crossover = request.getParameter("radioSelect");
+		String crossover = request.getParameter("radioCross");
+		String selection = request.getParameter("radioSelection");
 		Integer iterations;
 		try {
 			iterations = Integer.parseInt(iter);
@@ -64,13 +65,17 @@ public class MyServlet extends HttpServlet {
 		if ("buttonCalc".equals(button)) {
 			GA einGA = new GA();
 			for (int g = 0; g < (int) iterations; g++) {
-				if (crossover == "onepoint") {
+				if (crossover.equals("onepoint")) {
 					einGA.onePointCrossover();
 				} else {
 					einGA.uniformCrossover();
 				}
 				einGA.flipMutation();
-				einGA.selectionRankReplacement(2);// Dekodieren
+				if (selection.equals("rankrep")) {
+					einGA.selectionRankReplacement(2);// Dekodieren
+				} else {
+					einGA.selectionGenReplacement();
+				}
 			}
 			ergebnis = einGA.besteFitness;
 		}

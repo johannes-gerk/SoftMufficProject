@@ -27,7 +27,6 @@ class GA {
 	int[] besteLsg = new int[gene];
 	
 	float[] fitnessA = new float[anz];
-	
 	float[] fitnessB = new float[anz];
 
 	float[][] nutzwerteA = null;
@@ -273,7 +272,8 @@ class GA {
 		for (int k: besteLsg) {
 			result +="["+k+"]";
 		}
-		System.out.println("Beste Loesung: " + besteFitness + " Aktuelle Loesung: " + fitnessA[0]+fitnessB[0] + " Bestes Individuum: "+result);
+		float aktLoesung = fitnessA[0]+fitnessB[0];
+		System.out.println("Beste Loesung: " + besteFitness + " Aktuelle Loesung: " + aktLoesung);
 		/*
 		 * for(int j=0;j<gene;j++) { System.out.print(" "+eltern[0][j]); }
 		 * System.out.println();
@@ -361,7 +361,7 @@ class GA {
 					}
 				}
 				break;
-		// Würfel für alle Individuen anz-Mal.
+		// Würfel für jedes Individuum anz-Mal.
 			case 2: 
 				for (int i = 0; i < anz; i++) {
 					for (Map.Entry<int[], Float> entry : sortedProbabilityMapA.entrySet()) {
@@ -382,8 +382,28 @@ class GA {
 					}
 				}
 				break;
-		// Würfel einmal und überprüfe jedes Individuum (findet zu selten statt).
+			// Würfel anz-mal für alle Individueen.
 			case 3:
+				for (int i = 0; i < anz; i++) {
+					float randomValue = r.nextFloat();
+					for (Map.Entry<int[], Float> entry : sortedProbabilityMapA.entrySet()) {
+						if (randomValue <= entry.getValue()) {
+							entry.setValue(0f);
+							save[i] = entry.getKey();
+							successAmount++;
+						}
+					}
+					for (Map.Entry<int[], Float> entry : sortedProbabilityMapB.entrySet()) {
+						if (randomValue <= entry.getValue()) {
+							entry.setValue(0f);
+							save[i] = entry.getKey();
+							successAmount++;
+						}
+					}
+				}
+				break;
+		// Würfel einmal und überprüfe jedes Individuum (findet zu selten statt).
+			case 4:
 				int iterator3 = 0;
 				float randomValue = r.nextFloat();
 				for (Map.Entry<int[], Float> entry : sortedProbabilityMapA.entrySet()) {
@@ -423,7 +443,8 @@ class GA {
 		for (int k: besteLsg) {
 			result +="["+k+"]";
 		}
-		System.out.println("Beste Loesung: " + besteFitness + " Aktuelle Loesung: " + fitnessA[0]+fitnessB[0]+ " Success-Gen-Rep: "+successAmount + " Bestes Individuum: "+result);
+		float aktLoesung = fitnessA[0]+fitnessB[0];
+		System.out.println("Beste Loesung: " + besteFitness + " Aktuelle Loesung: " + aktLoesung + " Success-Gen-Rep: "+successAmount);
 		/*
 		 * for(int j=0;j<gene;j++) { System.out.print(" "+eltern[0][j]); }
 		 * System.out.println();
@@ -462,7 +483,7 @@ class GA {
 
         List<Entry<int[], Float>> list = new LinkedList<Entry<int[], Float>>(unsortMap.entrySet());
 
-        // Sorting the list based on values
+        // Sortiere die Liste nach value.
         Collections.sort(list, new Comparator<Entry<int[], Float>>() {
             public int compare(Entry<int[], Float> o1, Entry<int[], Float> o2){
                 if (order){
@@ -474,7 +495,7 @@ class GA {
             }
         });
 
-        // Maintaining insertion order with the help of LinkedList
+        // Behalte Eintragungs-Reihenfolge.
         Map<int[], Float> sortedMap = new LinkedHashMap<int[], Float>();
         for (Entry<int[], Float> entry : list){
             sortedMap.put(entry.getKey(), entry.getValue());
